@@ -1,0 +1,66 @@
+[
+  {
+    "date": "--01-01",
+    "nome": "Ano Novo",
+    "tipo": "feriado_nacional",
+    "pais": "BR",
+    "tags": ["global", "início do ano"],
+    "fonte": "https://www.planalto.gov.br/ccivil_03/leis/l6629.htm"
+  },
+  {
+    "date": "--01-06",
+    "nome": "Dia de Reis",
+    "tipo": "comemoracao",
+    "pais": null,
+    "tags": ["religioso", "cristão"],
+    "fonte": null
+  },
+  {
+    "date": "--01-15",
+    "nome": "Dia Mundial do Compositor",
+    "tipo": "comemoracao",
+    "pais": null,
+    "tags": ["música", "global"],
+    "fonte": null
+  },
+  {
+    "date": "--01-20",
+    "nome": "Dia do Farmacêutico",
+    "tipo": "comemoracao",
+    "pais": "BR",
+    "tags": ["saúde", "profissional"],
+    "fonte": null
+  },
+  {
+    "date": "--01-21",
+    "nome": "Dia Mundial da Religião",
+    "tipo": "comemoracao",
+    "pais": null,
+    "tags": ["religioso", "global"],
+    "fonte": "https://www.un.org/en/observances/religion-day"
+  },
+  {
+    "date": "--01-24",
+    "nome": "Dia Internacional da Educação",
+    "tipo": "comemoracao",
+    "pais": null,
+    "tags": ["educação", "global"],
+    "fonte": "https://www.un.org/en/observances/education-day"
+  },
+  {
+    "date": "--01-27",
+    "nome": "Dia Internacional em Memória das Vítimas do Holocausto",
+    "tipo": "comemoracao",
+    "pais": null,
+    "tags": ["histórico", "global"],
+    "fonte": "https://www.un.org/en/holocaustremembrance"
+  },
+  {
+    "date": "--01-30",
+    "nome": "Dia Nacional das Histórias em Quadrinhos",
+    "tipo": "comemoracao",
+    "pais": "BR",
+    "tags": ["cultura", "arte"],
+    "fonte": null
+  }
+]

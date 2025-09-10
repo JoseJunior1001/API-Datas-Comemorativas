@@ -1,0 +1,114 @@
+[
+  {
+    "date": "--05-01",
+    "nome": "Dia do Trabalhador",
+    "tipo": "feriado_nacional",
+    "pais": "BR",
+    "tags": ["trabalho", "global"],
+    "fonte": "https://www.planalto.gov.br/ccivil_03/leis/l6629.htm"
+  },
+  {
+    "date": "--05-03",
+    "nome": "Dia do Sertanejo",
+    "tipo": "comemoracao",
+    "pais": "BR",
+    "tags": ["música", "cultural"],
+    "fonte": null
+  },
+  {
+    "date": "--05-05",
+    "nome": "Dia Internacional da Enfermagem",
+    "tipo": "comemoracao",
+    "pais": null,
+    "tags": ["saúde", "global"],
+    "fonte": "https://www.icn.ch/what-we-do/campaigns/international-nurses-day"
+  },
+  {
+    "date": "--05-08",
+    "nome": "Dia Internacional da Cruz Vermelha",
+    "tipo": "comemoracao",
+    "pais": null,
+    "tags": ["humanitário", "global"],
+    "fonte": "https://www.icrc.org/en"
+  },
+  {
+    "date": "--05-09",
+    "nome": "Dia da Europa",
+    "tipo": "comemoracao",
+    "pais": null,
+    "tags": ["cultural", "global"],
+    "fonte": "https://european-union.europa.eu/principles-countries-history/symbols/europe-day_en"
+  },
+  {
+    "date": "--05-12",
+    "nome": "Dia Internacional da Enfermagem",
+    "tipo": "comemoracao",
+    "pais": null,
+    "tags": ["saúde", "global"],
+    "fonte": "https://www.icn.ch/"
+  },
+  {
+    "date": "--05-13",
+    "nome": "Abolição da Escravatura",
+    "tipo": "comemoracao",
+    "pais": "BR",
+    "tags": ["histórico", "cultural"],
+    "fonte": null
+  },
+  {
+    "date": "--05-15",
+    "nome": "Dia Internacional da Família",
+    "tipo": "comemoracao",
+    "pais": null,
+    "tags": ["social", "global"],
+    "fonte": "https://www.un.org/en/observances/international-day-of-families"
+  },
+  {
+    "date": "--05-17",
+    "nome": "Dia Internacional contra a Homofobia, Transfobia e Bifobia",
+    "tipo": "comemoracao",
+    "pais": null,
+    "tags": ["direitos humanos", "global"],
+    "fonte": "https://may17.org/"
+  },
+  {
+    "date": "--05-18",
+    "nome": "Dia Internacional dos Museus",
+    "tipo": "comemoracao",
+    "pais": null,
+    "tags": ["cultura", "global"],
+    "fonte": "https://icom.museum/en/"
+  },
+  {
+    "date": "--05-22",
+    "nome": "Dia Internacional da Biodiversidade",
+    "tipo": "comemoracao",
+    "pais": null,
+    "tags": ["meio ambiente", "global"],
+    "fonte": "https://www.un.org/en/observances/biological-diversity-day"
+  },
+  {
+    "date": "--05-25",
+    "nome": "Dia da Indústria",
+    "tipo": "comemoracao",
+    "pais": "BR",
+    "tags": ["economia", "trabalho"],
+    "fonte": null
+  },
+  {
+    "date": "--05-29",
+    "nome": "Dia do Geógrafo",
+    "tipo": "comemoracao",
+    "pais": "BR",
+    "tags": ["profissional", "ciência"],
+    "fonte": null
+  },
+  {
+    "date": "--05-31",
+    "nome": "Dia Mundial sem Tabaco",
+    "tipo": "comemoracao",
+    "pais": null,
+    "tags": ["saúde", "global"],
+    "fonte": "https://www.who.int/campaigns/world-no-tobacco-day"
+  }
+]

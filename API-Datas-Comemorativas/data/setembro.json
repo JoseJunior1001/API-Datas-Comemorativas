@@ -1,0 +1,106 @@
+[
+  {
+    "date": "--09-05",
+    "nome": "Dia da Amazônia",
+    "tipo": "comemoracao",
+    "pais": "BR",
+    "tags": ["meio ambiente", "regional"],
+    "fonte": null
+  },
+  {
+    "date": "--09-07",
+    "nome": "Independência do Brasil",
+    "tipo": "feriado_nacional",
+    "pais": "BR",
+    "tags": ["histórico", "nacional"],
+    "fonte": "https://www.planalto.gov.br/ccivil_03/leis/l6629.htm"
+  },
+  {
+    "date": "--09-08",
+    "nome": "Dia Mundial da Alfabetização",
+    "tipo": "comemoracao",
+    "pais": null,
+    "tags": ["educação", "global"],
+    "fonte": "https://www.un.org/en/observances/literacy-day"
+  },
+  {
+    "date": "--09-10",
+    "nome": "Dia Mundial de Prevenção ao Suicídio",
+    "tipo": "comemoracao",
+    "pais": null,
+    "tags": ["saúde mental", "global"],
+    "fonte": "https://www.who.int/campaigns/world-suicide-prevention-day"
+  },
+  {
+    "date": "--09-13",
+    "nome": "Dia do Programador",
+    "tipo": "comemoracao",
+    "pais": null,
+    "tags": ["tecnologia", "profissional"],
+    "fonte": null
+  },
+  {
+    "date": "--09-14",
+    "nome": "Dia do Frevo",
+    "tipo": "comemoracao",
+    "pais": "BR",
+    "tags": ["música", "cultural"],
+    "fonte": null
+  },
+  {
+    "date": "--09-19",
+    "nome": "Dia do Teatro",
+    "tipo": "comemoracao",
+    "pais": "BR",
+    "tags": ["arte", "cultural"],
+    "fonte": null
+  },
+  {
+    "date": "--09-21",
+    "nome": "Dia da Árvore",
+    "tipo": "comemoracao",
+    "pais": "BR",
+    "tags": ["meio ambiente", "natureza"],
+    "fonte": null
+  },
+  {
+    "date": "--09-22",
+    "nome": "Dia do Contador",
+    "tipo": "comemoracao",
+    "pais": "BR",
+    "tags": ["profissional", "financeiro"],
+    "fonte": null
+  },
+  {
+    "date": "--09-23",
+    "nome": "Início da Primavera",
+    "tipo": "comemoracao",
+    "pais": "BR",
+    "tags": ["estações", "natureza"],
+    "fonte": null
+  },
+  {
+    "date": "--09-25",
+    "nome": "Dia Nacional do Trânsito",
+    "tipo": "comemoracao",
+    "pais": "BR",
+    "tags": ["segurança", "social"],
+    "fonte": null
+  },
+  {
+    "date": "--09-27",
+    "nome": "Dia de Cosme e Damião",
+    "tipo": "comemoracao",
+    "pais": "BR",
+    "tags": ["religioso", "cultural"],
+    "fonte": null
+  },
+  {
+    "date": "--09-29",
+    "nome": "Dia do Anunciante",
+    "tipo": "comemoracao",
+    "pais": "BR",
+    "tags": ["profissional", "publicidade"],
+    "fonte": null
+  }
+]

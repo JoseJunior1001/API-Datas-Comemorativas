@@ -1,0 +1,106 @@
+[
+  {
+    "date": "--04-01",
+    "nome": "Dia da Mentira",
+    "tipo": "comemoracao",
+    "pais": null,
+    "tags": ["cultural", "global"],
+    "fonte": null
+  },
+  {
+    "date": "--04-02",
+    "nome": "Dia Internacional do Livro Infantil",
+    "tipo": "comemoracao",
+    "pais": null,
+    "tags": ["livros", "global"],
+    "fonte": "https://www.ibby.org/"
+  },
+  {
+    "date": "--04-07",
+    "nome": "Dia Mundial da Saúde",
+    "tipo": "comemoracao",
+    "pais": null,
+    "tags": ["saúde", "global"],
+    "fonte": "https://www.who.int/campaigns/world-health-day"
+  },
+  {
+    "date": "--04-08",
+    "nome": "Dia Mundial do Combate ao Câncer",
+    "tipo": "comemoracao",
+    "pais": null,
+    "tags": ["saúde", "global"],
+    "fonte": "https://www.uicc.org/"
+  },
+  {
+    "date": "--04-12",
+    "nome": "Dia do Obstetra",
+    "tipo": "comemoracao",
+    "pais": "BR",
+    "tags": ["saúde", "profissional"],
+    "fonte": null
+  },
+  {
+    "date": "--04-19",
+    "nome": "Dia do Índio",
+    "tipo": "comemoracao",
+    "pais": "BR",
+    "tags": ["cultural", "histórico"],
+    "fonte": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del5454.htm"
+  },
+  {
+    "date": "--04-21",
+    "nome": "Tiradentes",
+    "tipo": "feriado_nacional",
+    "pais": "BR",
+    "tags": ["histórico", "nacional"],
+    "fonte": "https://www.planalto.gov.br/ccivil_03/leis/l6629.htm"
+  },
+  {
+    "date": "--04-22",
+    "nome": "Descobrimento do Brasil",
+    "tipo": "comemoracao",
+    "pais": "BR",
+    "tags": ["histórico", "nacional"],
+    "fonte": null
+  },
+  {
+    "date": "--04-22",
+    "nome": "Dia da Terra",
+    "tipo": "comemoracao",
+    "pais": null,
+    "tags": ["meio ambiente", "global"],
+    "fonte": "https://www.earthday.org/"
+  },
+  {
+    "date": "--04-23",
+    "nome": "Dia Mundial do Livro e do Direito do Autor",
+    "tipo": "comemoracao",
+    "pais": null,
+    "tags": ["literatura", "global"],
+    "fonte": "https://www.un.org/en/observances/book-and-copyright-day"
+  },
+  {
+    "date": "--04-25",
+    "nome": "Dia do Contabilista",
+    "tipo": "comemoracao",
+    "pais": "BR",
+    "tags": ["profissional", "financeiro"],
+    "fonte": null
+  },
+  {
+    "date": "--04-26",
+    "nome": "Dia do Goleiro",
+    "tipo": "comemoracao",
+    "pais": "BR",
+    "tags": ["esportes", "futebol"],
+    "fonte": null
+  },
+  {
+    "date": "--04-28",
+    "nome": "Dia da Educação",
+    "tipo": "comemoracao",
+    "pais": null,
+    "tags": ["educação", "global"],
+    "fonte": "https://www.unesco.org/en/days/education"
+  }
+]

@@ -1,0 +1,90 @@
+[
+  {
+    "date": "--12-01",
+    "nome": "Dia Mundial de Luta contra a AIDS",
+    "tipo": "comemoracao",
+    "pais": null,
+    "tags": ["saúde", "global"],
+    "fonte": "https://www.un.org/en/observances/world-aids-day"
+  },
+  {
+    "date": "--12-02",
+    "nome": "Dia Nacional do Samba",
+    "tipo": "comemoracao",
+    "pais": "BR",
+    "tags": ["música", "cultural"],
+    "fonte": null
+  },
+  {
+    "date": "--12-05",
+    "nome": "Dia Internacional dos Voluntários",
+    "tipo": "comemoracao",
+    "pais": null,
+    "tags": ["social", "global"],
+    "fonte": "https://www.un.org/en/observances/volunteer-day"
+  },
+  {
+    "date": "--12-08",
+    "nome": "Dia da Justiça",
+    "tipo": "comemoracao",
+    "pais": "BR",
+    "tags": ["social", "jurídico"],
+    "fonte": null
+  },
+  {
+    "date": "--12-10",
+    "nome": "Dia dos Direitos Humanos",
+    "tipo": "comemoracao",
+    "pais": null,
+    "tags": ["direitos humanos", "global"],
+    "fonte": "https://www.un.org/en/observances/human-rights-day"
+  },
+  {
+    "date": "--12-13",
+    "nome": "Dia do Marinheiro",
+    "tipo": "comemoracao",
+    "pais": "BR",
+    "tags": ["militar", "profissional"],
+    "fonte": null
+  },
+  {
+    "date": "--12-20",
+    "nome": "Dia do Mecânico",
+    "tipo": "comemoracao",
+    "pais": "BR",
+    "tags": ["profissional", "automotivo"],
+    "fonte": null
+  },
+  {
+    "date": "--12-21",
+    "nome": "Início do Verão",
+    "tipo": "comemoracao",
+    "pais": "BR",
+    "tags": ["estações", "natureza"],
+    "fonte": null
+  },
+  {
+    "date": "--12-24",
+    "nome": "Véspera de Natal",
+    "tipo": "ponto_facultativo",
+    "pais": "BR",
+    "tags": ["religioso", "natalino"],
+    "fonte": null
+  },
+  {
+    "date": "--12-25",
+    "nome": "Natal",
+    "tipo": "feriado_nacional",
+    "pais": "BR",
+    "tags": ["religioso", "global"],
+    "fonte": "https://www.planalto.gov.br/ccivil_03/leis/l6629.htm"
+  },
+  {
+    "date": "--12-31",
+    "nome": "Véspera de Ano Novo",
+    "tipo": "ponto_facultativo",
+    "pais": "BR",
+    "tags": ["global", "fim do ano"],
+    "fonte": null
+  }
+]

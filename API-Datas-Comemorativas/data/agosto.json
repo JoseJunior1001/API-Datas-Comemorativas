@@ -1,0 +1,74 @@
+[
+  {
+    "date": "--08-05",
+    "nome": "Dia Nacional da Saúde",
+    "tipo": "comemoracao",
+    "pais": "BR",
+    "tags": ["saúde", "nacional"],
+    "fonte": null
+  },
+  {
+    "date": "--08-09",
+    "nome": "Dia Internacional dos Povos Indígenas",
+    "tipo": "comemoracao",
+    "pais": null,
+    "tags": ["cultural", "global"],
+    "fonte": "https://www.un.org/en/observances/indigenous-day"
+  },
+  {
+    "date": "--08-11",
+    "nome": "Dia do Estudante",
+    "tipo": "comemoracao",
+    "pais": "BR",
+    "tags": ["educação", "social"],
+    "fonte": null
+  },
+  {
+    "date": "--08-12",
+    "nome": "Dia Internacional da Juventude",
+    "tipo": "comemoracao",
+    "pais": null,
+    "tags": ["social", "global"],
+    "fonte": "https://www.un.org/en/observances/youth-day"
+  },
+  {
+    "date": "--08-13",
+    "nome": "Dia do Economista",
+    "tipo": "comemoracao",
+    "pais": "BR",
+    "tags": ["profissional", "economia"],
+    "fonte": null
+  },
+  {
+    "date": "--08-15",
+    "nome": "Dia da Informática",
+    "tipo": "comemoracao",
+    "pais": "BR",
+    "tags": ["tecnologia", "inovação"],
+    "fonte": null
+  },
+  {
+    "date": "--08-22",
+    "nome": "Dia do Folclore",
+    "tipo": "comemoracao",
+    "pais": "BR",
+    "tags": ["cultural", "tradição"],
+    "fonte": null
+  },
+  {
+    "date": "--08-25",
+    "nome": "Dia do Soldado",
+    "tipo": "comemoracao",
+    "pais": "BR",
+    "tags": ["militar", "nacional"],
+    "fonte": null
+  },
+  {
+    "date": "--08-29",
+    "nome": "Dia Nacional de Combate ao Fumo",
+    "tipo": "comemoracao",
+    "pais": "BR",
+    "tags": ["saúde", "prevenção"],
+    "fonte": null
+  }
+]

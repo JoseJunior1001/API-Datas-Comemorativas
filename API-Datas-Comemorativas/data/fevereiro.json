@@ -1,0 +1,66 @@
+[
+  {
+    "date": "--02-02",
+    "nome": "Dia de Iemanjá",
+    "tipo": "comemoracao",
+    "pais": "BR",
+    "tags": ["religioso", "cultura afro-brasileira"],
+    "fonte": null
+  },
+  {
+    "date": "--02-04",
+    "nome": "Dia Mundial do Câncer",
+    "tipo": "comemoracao",
+    "pais": null,
+    "tags": ["saúde", "global"],
+    "fonte": "https://www.worldcancerday.org/"
+  },
+  {
+    "date": "--02-11",
+    "nome": "Dia Internacional das Mulheres e Meninas na Ciência",
+    "tipo": "comemoracao",
+    "pais": null,
+    "tags": ["ciência", "global"],
+    "fonte": "https://www.un.org/en/observances/women-and-girls-in-science-day"
+  },
+  {
+    "date": "--02-13",
+    "nome": "Dia Mundial do Rádio",
+    "tipo": "comemoracao",
+    "pais": null,
+    "tags": ["comunicação", "global"],
+    "fonte": "https://www.un.org/en/observances/radio-day"
+  },
+  {
+    "date": "--02-14",
+    "nome": "Dia dos Namorados (Valentine's Day)",
+    "tipo": "comemoracao",
+    "pais": null,
+    "tags": ["amor", "global"],
+    "fonte": null
+  },
+  {
+    "date": "--02-20",
+    "nome": "Dia Nacional do Turismo Ecológico",
+    "tipo": "comemoracao",
+    "pais": "BR",
+    "tags": ["meio ambiente", "turismo"],
+    "fonte": null
+  },
+  {
+    "date": "--02-21",
+    "nome": "Dia Internacional da Língua Materna",
+    "tipo": "comemoracao",
+    "pais": null,
+    "tags": ["educação", "cultural", "global"],
+    "fonte": "https://www.un.org/en/observances/mother-language-day"
+  },
+  {
+    "date": "--02-27",
+    "nome": "Dia Nacional do Livro Didático",
+    "tipo": "comemoracao",
+    "pais": "BR",
+    "tags": ["educação", "literatura"],
+    "fonte": null
+  }
+]

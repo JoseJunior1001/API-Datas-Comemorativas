@@ -1,0 +1,162 @@
+[
+  {
+    "date": "--10-01",
+    "nome": "Dia Internacional do Idoso",
+    "tipo": "comemoracao",
+    "pais": null,
+    "tags": ["social", "global"],
+    "fonte": "https://www.un.org/en/observances/older-persons-day"
+  },
+  {
+    "date": "--10-03",
+    "nome": "Dia do Petróleo Brasileiro",
+    "tipo": "comemoracao",
+    "pais": "BR",
+    "tags": ["economia", "energia"],
+    "fonte": null
+  },
+  {
+    "date": "--10-04",
+    "nome": "Dia Mundial dos Animais",
+    "tipo": "comemoracao",
+    "pais": null,
+    "tags": ["animais", "global"],
+    "fonte": "https://www.worldanimalday.org.uk/"
+  },
+  {
+    "date": "--10-04",
+    "nome": "Dia de São Francisco de Assis",
+    "tipo": "comemoracao",
+    "pais": "BR",
+    "tags": ["religioso", "cultural"],
+    "fonte": null
+  },
+  {
+    "date": "--10-05",
+    "nome": "Dia das Aves",
+    "tipo": "comemoracao",
+    "pais": "BR",
+    "tags": ["meio ambiente", "animais"],
+    "fonte": null
+  },
+  {
+    "date": "--10-07",
+    "nome": "Dia do Compositor Brasileiro",
+    "tipo": "comemoracao",
+    "pais": "BR",
+    "tags": ["música", "cultural"],
+    "fonte": null
+  },
+  {
+    "date": "--10-08",
+    "nome": "Dia do Nordestino",
+    "tipo": "comemoracao",
+    "pais": "BR",
+    "tags": ["cultural", "regional"],
+    "fonte": "https://www.planalto.gov.br/ccivil_03/leis/2007/l11.486.htm"
+  },
+  {
+    "date": "--10-10",
+    "nome": "Dia Mundial da Saúde Mental",
+    "tipo": "comemoracao",
+    "pais": null,
+    "tags": ["saúde mental", "global"],
+    "fonte": "https://www.who.int/campaigns/world-mental-health-day"
+  },
+  {
+    "date": "--10-11",
+    "nome": "Dia do Deficiente Físico",
+    "tipo": "comemoracao",
+    "pais": "BR",
+    "tags": ["inclusão", "social"],
+    "fonte": null
+  },
+  {
+    "date": "--10-12",
+    "nome": "Nossa Senhora Aparecida",
+    "tipo": "feriado_nacional",
+    "pais": "BR",
+    "tags": ["religioso", "nacional"],
+    "fonte": "https://www.planalto.gov.br/ccivil_03/leis/l6629.htm"
+  },
+  {
+    "date": "--10-12",
+    "nome": "Dia das Crianças",
+    "tipo": "comemoracao",
+    "pais": "BR",
+    "tags": ["social", "família"],
+    "fonte": null
+  },
+  {
+    "date": "--10-13",
+    "nome": "Dia do Fisioterapeuta",
+    "tipo": "comemoracao",
+    "pais": "BR",
+    "tags": ["saúde", "profissional"],
+    "fonte": null
+  },
+  {
+    "date": "--10-15",
+    "nome": "Dia do Professor",
+    "tipo": "comemoracao",
+    "pais": "BR",
+    "tags": ["educação", "profissional"],
+    "fonte": null
+  },
+  {
+    "date": "--10-16",
+    "nome": "Dia Mundial da Alimentação",
+    "tipo": "comemoracao",
+    "pais": null,
+    "tags": ["saúde", "global"],
+    "fonte": "https://www.fao.org/world-food-day/en"
+  },
+  {
+    "date": "--10-18",
+    "nome": "Dia do Médico",
+    "tipo": "comemoracao",
+    "pais": "BR",
+    "tags": ["saúde", "profissional"],
+    "fonte": null
+  },
+  {
+    "date": "--10-20",
+    "nome": "Dia do Arquiteto",
+    "tipo": "comemoracao",
+    "pais": "BR",
+    "tags": ["profissional", "construção"],
+    "fonte": null
+  },
+  {
+    "date": "--10-24",
+    "nome": "Dia das Nações Unidas",
+    "tipo": "comemoracao",
+    "pais": null,
+    "tags": ["global", "político"],
+    "fonte": "https://www.un.org/en/observances/un-day"
+  },
+  {
+    "date": "--10-25",
+    "nome": "Dia do Dentista",
+    "tipo": "comemoracao",
+    "pais": "BR",
+    "tags": ["saúde", "profissional"],
+    "fonte": null
+  },
+  {
+    "date": "--10-28",
+    "nome": "Dia do Funcionário Público",
+    "tipo": "comemoracao",
+    "pais": "BR",
+    "tags": ["profissional", "trabalho"],
+    "fonte": null
+  },
+  {
+    "date": "--10-31",
+    "nome": "Dia das Bruxas (Halloween)",
+    "tipo": "comemoracao",
+    "pais": null,
+    "tags": ["cultural", "global"],
+    "fonte": null
+  }
+]

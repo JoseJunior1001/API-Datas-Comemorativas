@@ -1,0 +1,90 @@
+[
+  {
+    "date": "--11-01",
+    "nome": "Dia de Todos os Santos",
+    "tipo": "feriado_nacional",
+    "pais": "BR",
+    "tags": ["religioso", "nacional"],
+    "fonte": "https://www.planalto.gov.br/ccivil_03/leis/l6629.htm"
+  },
+  {
+    "date": "--11-02",
+    "nome": "Finados",
+    "tipo": "feriado_nacional",
+    "pais": "BR",
+    "tags": ["religioso", "nacional"],
+    "fonte": "https://www.planalto.gov.br/ccivil_03/leis/l6629.htm"
+  },
+  {
+    "date": "--11-05",
+    "nome": "Dia da Cultura",
+    "tipo": "comemoracao",
+    "pais": "BR",
+    "tags": ["cultural", "nacional"],
+    "fonte": null
+  },
+  {
+    "date": "--11-08",
+    "nome": "Dia do Radiologista",
+    "tipo": "comemoracao",
+    "pais": "BR",
+    "tags": ["saúde", "profissional"],
+    "fonte": null
+  },
+  {
+    "date": "--11-14",
+    "nome": "Dia Mundial do Diabetes",
+    "tipo": "comemoracao",
+    "pais": null,
+    "tags": ["saúde", "global"],
+    "fonte": "https://www.who.int/campaigns/world-diabetes-day"
+  },
+  {
+    "date": "--11-15",
+    "nome": "Proclamação da República",
+    "tipo": "feriado_nacional",
+    "pais": "BR",
+    "tags": ["histórico", "nacional"],
+    "fonte": "https://www.planalto.gov.br/ccivil_03/leis/l6629.htm"
+  },
+  {
+    "date": "--11-17",
+    "nome": "Dia da Criatividade",
+    "tipo": "comemoracao",
+    "pais": null,
+    "tags": ["social", "global"],
+    "fonte": null
+  },
+  {
+    "date": "--11-19",
+    "nome": "Dia da Bandeira",
+    "tipo": "comemoracao",
+    "pais": "BR",
+    "tags": ["símbolo nacional", "histórico"],
+    "fonte": null
+  },
+  {
+    "date": "--11-20",
+    "nome": "Dia da Consciência Negra",
+    "tipo": "comemoracao",
+    "pais": "BR",
+    "tags": ["cultural", "histórico"],
+    "fonte": "https://www.planalto.gov.br/ccivil_03/_ato2007-2010/2011/lei/l12519.htm"
+  },
+  {
+    "date": "--11-25",
+    "nome": "Dia Internacional para a Eliminação da Violência contra as Mulheres",
+    "tipo": "comemoracao",
+    "pais": null,
+    "tags": ["direitos humanos", "global"],
+    "fonte": "https://www.un.org/en/observances/ending-violence-against-women-day"
+  },
+  {
+    "date": "--11-30",
+    "nome": "Dia do Estatuto da Terra",
+    "tipo": "comemoracao",
+    "pais": "BR",
+    "tags": ["agrário", "histórico"],
+    "fonte": null
+  }
+]

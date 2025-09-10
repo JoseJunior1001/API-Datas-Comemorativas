@@ -1,0 +1,82 @@
+[
+  {
+    "date": "--06-01",
+    "nome": "Dia Mundial da Criança",
+    "tipo": "comemoracao",
+    "pais": null,
+    "tags": ["social", "global"],
+    "fonte": "https://www.un.org/en/observances/world-childrens-day"
+  },
+  {
+    "date": "--06-05",
+    "nome": "Dia Mundial do Meio Ambiente",
+    "tipo": "comemoracao",
+    "pais": null,
+    "tags": ["meio ambiente", "global"],
+    "fonte": "https://www.un.org/en/observances/environment-day"
+  },
+  {
+    "date": "--06-08",
+    "nome": "Dia Mundial dos Oceanos",
+    "tipo": "comemoracao",
+    "pais": null,
+    "tags": ["meio ambiente", "global"],
+    "fonte": "https://www.un.org/en/observances/oceans-day"
+  },
+  {
+    "date": "--06-12",
+    "nome": "Dia dos Namorados (Brasil)",
+    "tipo": "comemoracao",
+    "pais": "BR",
+    "tags": ["amor", "cultural"],
+    "fonte": null
+  },
+  {
+    "date": "--06-13",
+    "nome": "Dia de Santo Antônio",
+    "tipo": "comemoracao",
+    "pais": "BR",
+    "tags": ["religioso", "cultural"],
+    "fonte": null
+  },
+  {
+    "date": "--06-14",
+    "nome": "Dia Mundial do Doador de Sangue",
+    "tipo": "comemoracao",
+    "pais": null,
+    "tags": ["saúde", "global"],
+    "fonte": "https://www.who.int/campaigns/world-blood-donor-day"
+  },
+  {
+    "date": "--06-21",
+    "nome": "Início do Inverno",
+    "tipo": "comemoracao",
+    "pais": "BR",
+    "tags": ["estações", "natureza"],
+    "fonte": null
+  },
+  {
+    "date": "--06-24",
+    "nome": "Dia de São João",
+    "tipo": "comemoracao",
+    "pais": "BR",
+    "tags": ["religioso", "festa junina"],
+    "fonte": null
+  },
+  {
+    "date": "--06-26",
+    "nome": "Dia Internacional contra o Abuso e Tráfico Ilícito de Drogas",
+    "tipo": "comemoracao",
+    "pais": null,
+    "tags": ["saúde", "global"],
+    "fonte": "https://www.un.org/en/observances/end-drug-abuse-day"
+  },
+  {
+    "date": "--06-29",
+    "nome": "Dia de São Pedro",
+    "tipo": "comemoracao",
+    "pais": "BR",
+    "tags": ["religioso", "festa junina"],
+    "fonte": null
+  }
+]

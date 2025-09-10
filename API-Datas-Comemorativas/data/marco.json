@@ -1,0 +1,58 @@
+[
+  {
+    "date": "--03-08",
+    "nome": "Dia Internacional da Mulher",
+    "tipo": "comemoracao",
+    "pais": null,
+    "tags": ["global", "direitos das mulheres"],
+    "fonte": "https://www.un.org/en/observances/womens-day"
+  },
+  {
+    "date": "--03-14",
+    "nome": "Dia Nacional dos Animais",
+    "tipo": "comemoracao",
+    "pais": "BR",
+    "tags": ["animais", "meio ambiente"],
+    "fonte": null
+  },
+  {
+    "date": "--03-15",
+    "nome": "Dia Mundial dos Direitos do Consumidor",
+    "tipo": "comemoracao",
+    "pais": null,
+    "tags": ["direitos", "global"],
+    "fonte": "https://www.un.org/en/observances/consumer-rights-day"
+  },
+  {
+    "date": "--03-20",
+    "nome": "Dia Internacional da Felicidade",
+    "tipo": "comemoracao",
+    "pais": null,
+    "tags": ["bem-estar", "global"],
+    "fonte": "https://www.un.org/en/observances/happiness-day"
+  },
+  {
+    "date": "--03-21",
+    "nome": "Dia Internacional contra a Discriminação Racial",
+    "tipo": "comemoracao",
+    "pais": null,
+    "tags": ["direitos humanos", "global"],
+    "fonte": "https://www.un.org/en/observances/end-racism-day"
+  },
+  {
+    "date": "--03-22",
+    "nome": "Dia Mundial da Água",
+    "tipo": "comemoracao",
+    "pais": null,
+    "tags": ["meio ambiente", "global"],
+    "fonte": "https://www.un.org/en/observances/water-day"
+  },
+  {
+    "date": "--03-27",
+    "nome": "Dia do Circo",
+    "tipo": "comemoracao",
+    "pais": "BR",
+    "tags": ["cultura", "arte"],
+    "fonte": null
+  }
+]

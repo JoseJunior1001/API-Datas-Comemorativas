@@ -1,0 +1,66 @@
+[
+  {
+    "date": "--07-02",
+    "nome": "Dia da Independência da Bahia",
+    "tipo": "feriado_estadual",
+    "pais": "BR",
+    "tags": ["histórico", "regional"],
+    "fonte": null
+  },
+  {
+    "date": "--07-08",
+    "nome": "Dia do Panificador",
+    "tipo": "comemoracao",
+    "pais": "BR",
+    "tags": ["profissional", "alimentação"],
+    "fonte": null
+  },
+  {
+    "date": "--07-13",
+    "nome": "Dia Mundial do Rock",
+    "tipo": "comemoracao",
+    "pais": "BR",
+    "tags": ["música", "brasil"],
+    "fonte": null
+  },
+  {
+    "date": "--07-14",
+    "nome": "Dia da Liberdade de Pensamento",
+    "tipo": "comemoracao",
+    "pais": null,
+    "tags": ["direitos humanos", "global"],
+    "fonte": null
+  },
+  {
+    "date": "--07-20",
+    "nome": "Dia do Amigo e Internacional da Amizade",
+    "tipo": "comemoracao",
+    "pais": null,
+    "tags": ["social", "global"],
+    "fonte": "https://www.un.org/en/observances/friendship-day"
+  },
+  {
+    "date": "--07-25",
+    "nome": "Dia do Escritor",
+    "tipo": "comemoracao",
+    "pais": "BR",
+    "tags": ["literatura", "cultural"],
+    "fonte": null
+  },
+  {
+    "date": "--07-26",
+    "nome": "Dia dos Avós",
+    "tipo": "comemoracao",
+    "pais": "BR",
+    "tags": ["família", "social"],
+    "fonte": null
+  },
+  {
+    "date": "--07-28",
+    "nome": "Dia do Agricultor",
+    "tipo": "comemoracao",
+    "pais": "BR",
+    "tags": ["profissional", "agricultura"],
+    "fonte": null
+  }
+]
