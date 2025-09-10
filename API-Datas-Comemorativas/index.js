@@ -81,9 +81,7 @@ function observancesForDay(dd, mm) {
   }).map(normalizeItem);
 }
 
-/**
- * Endpoints
- */
+  //Endpoints
 
 // Saúde
 app.get('/api/health', (req, res) => {
@@ -104,6 +102,28 @@ app.get('/api/hoje', (req, res) => {
     date: todayStr,
     timeZone: tz,
     itens: observances
+  });
+});
+//Busca por datas do mês
+app.get('/api/mes/:numero', (req, res) => {
+  const numero = parseInt(req.params.numero, 10);
+  if (isNaN(numero) || numero < 1 || numero > 12) {
+    return res.status(400).json({ error: 'Mês inválido. Use um número de 1 a 12.' });
+  }
+
+  const datasDoMes = OBS.filter(o => {
+    const m = o.date.match(/^--?(\d{2})-(\d{2})$/);
+    if (m) {
+      const mes = parseInt(m[1], 10);
+      return mes === numero;
+    }
+    return false;
+  }).map(normalizeItem);
+
+  res.json({
+    mes: pad2(numero),
+    total: datasDoMes.length,
+    itens: datasDoMes
   });
 });
 
@@ -140,4 +160,5 @@ app.use((req, res) => {
 
 app.listen(PORT, () => {
   console.log(`API rodando em http://localhost:${PORT}`);
+
 });
