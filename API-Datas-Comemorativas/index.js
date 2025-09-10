@@ -1,164 +1,170 @@
 import express from 'express';
 import cors from 'cors';
-import { fileURLToPath } from 'url';
-import path from 'path';
-import carregarDatas from './src/loadDatasComemorativas.js';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+import helmet from 'helmet';
+import morgan from 'morgan';
+import rateLimit from 'express-rate-limit';
 
 const app = express();
-const PORT = process.env.PORT || 3000;
 
+// Middlewares
+app.use(helmet());
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: '200kb' }));
+app.use(morgan('tiny'));
+app.use(
+  rateLimit({
+    windowMs: 60 * 1000,
+    max: 120, // 120 req/min por IP
+    standardHeaders: true,
+    legacyHeaders: false
+  })
+);
 
-// Carrega todas as datas comemorativas dos arquivos mensais
-const OBS = carregarDatas();
+// Utils
+const onlyDigits = (s = '') => (s || '').toString().replace(/\D+/g, '');
+const isRepeated = (digits) => /^(\d)\1{10,13}$/.test(digits);
 
-/**
- * Helpers de data
- */
-function nowInTimeZone(timeZone = 'America/Sao_Paulo') {
-  const fmt = new Intl.DateTimeFormat('en-CA', {
-    timeZone,
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit'
-  });
-  const parts = Object.fromEntries(fmt.formatToParts(new Date()).map(p => [p.type, p.value]));
-  const isoLike = `${parts.year}-${parts.month}-${parts.day}T${parts.hour}:${parts.minute}:${parts.second}`;
-  return new Date(isoLike);
-}
+// CPF
+function validateCPF(raw) {
+  const errors = [];
+  const digits = onlyDigits(raw);
+  if (digits.length !== 11) errors.push('CPF deve ter 11 dígitos');
+  if (isRepeated(digits)) errors.push('CPF inválido (sequência repetida)');
+  if (errors.length) return { valid: false, errors };
 
-function pad2(n) {
-  return String(n).padStart(2, '0');
-}
-
-function parseDiaParam(diaStr) {
-  const m = diaStr.match(/^(\d{2})-(\d{2})$/);
-  if (!m) return null;
-  const dd = parseInt(m[1], 10);
-  const mm = parseInt(m[2], 10);
-  if (mm < 1 || mm > 12 || dd < 1 || dd > 31) return null;
-  return { dd, mm };
-}
-
-function parseISODateParam(dateStr) {
-  const m = dateStr.match(/^(\d{4})-(\d{2})-(\d{2})$/);
-  if (!m) return null;
-  const yyyy = parseInt(m[1], 10);
-  const mm = parseInt(m[2], 10);
-  const dd = parseInt(m[3], 10);
-  if (mm < 1 || mm > 12 || dd < 1 || dd > 31) return null;
-  return { yyyy, mm, dd };
-}
-
-function normalizeItem(item) {
-  return {
-    date: item.date,
-    nome: item.nome || item.name,
-    tipo: item.tipo || 'comemoracao',
-    pais: item.pais || null,
-    estado: item.estado || null,
-    tags: item.tags || [],
-    fonte: item.fonte || item.note || null
+  const calcCheck = (baseLen) => {
+    let sum = 0;
+    for (let i = 0; i < baseLen; i++) sum += parseInt(digits[i]) * (baseLen + 1 - i);
+    const mod = (sum * 10) % 11;
+    return mod === 10 ? 0 : mod;
   };
+  const d1 = calcCheck(9);
+  const d2 = calcCheck(10);
+  const valid = d1 === parseInt(digits[9]) && d2 === parseInt(digits[10]);
+  return valid
+    ? { valid: true, normalized: `${digits.slice(0,3)}.${digits.slice(3,6)}.${digits.slice(6,9)}-${digits.slice(9)}` }
+    : { valid: false, errors: ['Dígitos verificadores inválidos'] };
 }
 
-function observancesForDay(dd, mm) {
-  return OBS.filter(o => {
-    const m = o.date.match(/^--?(\d{2})-(\d{2})$/);
-    if (m) {
-      const month = parseInt(m[1], 10);
-      const day = parseInt(m[2], 10);
-      return day === dd && month === mm;
-    }
-    return false;
-  }).map(normalizeItem);
+// CNPJ
+function validateCNPJ(raw) {
+  const errors = [];
+  const digits = onlyDigits(raw);
+  if (digits.length !== 14) errors.push('CNPJ deve ter 14 dígitos');
+  if (/^(\d)\1{13}$/.test(digits)) errors.push('CNPJ inválido (sequência repetida)');
+  if (errors.length) return { valid: false, errors };
+
+  const calcCheck = (len) => {
+    const weights = len === 12 ? [5,4,3,2,9,8,7,6,5,4,3,2] : [6,5,4,3,2,9,8,7,6,5,4,3,2];
+    let sum = 0;
+    for (let i = 0; i < weights.length; i++) sum += parseInt(digits[i]) * weights[i];
+    const mod = sum % 11;
+    return mod < 2 ? 0 : 11 - mod;
+  };
+  const d1 = calcCheck(12);
+  const d2 = calcCheck(13);
+  const valid = d1 === parseInt(digits[12]) && d2 === parseInt(digits[13]);
+  return valid
+    ? { valid: true, normalized: `${digits.slice(0,2)}.${digits.slice(2,5)}.${digits.slice(5,8)}/${digits.slice(8,12)}-${digits.slice(12)}` }
+    : { valid: false, errors: ['Dígitos verificadores inválidos'] };
 }
 
-  //Endpoints
+// Email
+function validateEmail(raw) {
+  const errors = [];
+  const s = (raw || '').toString().trim();
+  const re = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i;
+  if (!s) errors.push('E-mail não informado');
+  if (s.length > 320) errors.push('E-mail muito longo');
+  if (!re.test(s)) errors.push('Formato de e-mail inválido');
+  if (errors.length) return { valid: false, errors };
+  return { valid: true, normalized: s.toLowerCase() };
+}
 
-// Saúde
-app.get('/api/health', (req, res) => {
-  res.json({ ok: true, service: 'api-datas-comemorativas', version: '2.0.0' });
-});
+// Password
+function validatePassword(raw, policy = {}) {
+  const errors = [];
+  const s = (raw || '').toString();
 
-// Hoje em America/Sao_Paulo
-app.get('/api/hoje', (req, res) => {
-  const tz = 'America/Sao_Paulo';
-  const now = nowInTimeZone(tz);
-  const mm = now.getMonth() + 1;
-  const dd = now.getDate();
-  const todayStr = `${pad2(mm)}-${pad2(dd)}`;
+  const minLength = Number(policy.minLength ?? 8);
+  const maxLength = Number(policy.maxLength ?? 128);
+  const requireUpper = policy.upper ?? true;
+  const requireLower = policy.lower ?? true;
+  const requireNumber = policy.number ?? true;
+  const requireSymbol = policy.symbol ?? true;
+  const forbidCommon = policy.forbidCommon ?? true;
 
-  const observances = observancesForDay(dd, mm);
+  if (s.length < minLength) errors.push(`Senha deve ter no mínimo ${minLength} caracteres`);
+  if (s.length > maxLength) errors.push(`Senha deve ter no máximo ${maxLength} caracteres`);
+  if (requireUpper && !/[A-Z]/.test(s)) errors.push('Ao menos 1 letra maiúscula');
+  if (requireLower && !/[a-z]/.test(s)) errors.push('Ao menos 1 letra minúscula');
+  if (requireNumber && !/[0-9]/.test(s)) errors.push('Ao menos 1 número');
+  if (requireSymbol && !/[!@#$%^&*(),.?":{}|<>_\-+=\[\]\\;/`'~]/.test(s)) errors.push('Ao menos 1 símbolo');
 
-  res.json({
-    date: todayStr,
-    timeZone: tz,
-    itens: observances
-  });
-});
-//Busca por datas do mês
-app.get('/api/mes/:numero', (req, res) => {
-  const numero = parseInt(req.params.numero, 10);
-  if (isNaN(numero) || numero < 1 || numero > 12) {
-    return res.status(400).json({ error: 'Mês inválido. Use um número de 1 a 12.' });
+  if (forbidCommon) {
+    const common = new Set([
+      '123456','password','123456789','qwerty','abc123','111111','123123','senha','admin','iloveyou'
+    ]);
+    if (common.has(s.toLowerCase())) errors.push('Senha muito comum');
   }
 
-  const datasDoMes = OBS.filter(o => {
-    const m = o.date.match(/^--?(\d{2})-(\d{2})$/);
-    if (m) {
-      const mes = parseInt(m[1], 10);
-      return mes === numero;
-    }
-    return false;
-  }).map(normalizeItem);
+  if (/^\s|\s$/.test(s)) errors.push('Não iniciar ou terminar com espaço');
 
-  res.json({
-    mes: pad2(numero),
-    total: datasDoMes.length,
-    itens: datasDoMes
-  });
+  return errors.length ? { valid: false, errors } : { valid: true };
+}
+
+// Telefone BR
+function validatePhoneBR(raw) {
+  const s = onlyDigits(raw);
+  const errors = [];
+  const local = s.startsWith('55') ? s.slice(2) : s;
+  if (local.length !== 10 && local.length !== 11) errors.push('Telefone deve ter 10 (fixo) ou 11 dígitos (celular)');
+  const ddd = local.slice(0,2);
+  if (!/^(1[1-9]|2[12478]|3[1-578]|4[1-9]|5[1345]|6[1-9]|7[1-9]|8[1-9]|9[1-9])$/.test(ddd)) errors.push('DDD inválido');
+  if (local.length === 11 && local[2] !== '9') errors.push('Celular deve iniciar com 9');
+  if (errors.length) return { valid: false, errors };
+
+  const normalized = `+55 (${ddd}) ${local.length===11 ? `${local[2]}${local[3]}${local[4]}${local[5]}-${local.slice(6)}` : `${local[2]}${local[3]}${local[4]}${local[5]}-${local.slice(6)}`}`;
+  return { valid: true, normalized };
+}
+
+// CEP
+function validateCEP(raw) {
+  const digits = onlyDigits(raw);
+  if (digits.length !== 8) return { valid: false, errors: ['CEP deve ter 8 dígitos'] };
+  const normalized = `${digits.slice(0,5)}-${digits.slice(5)}`;
+  return { valid: true, normalized };
+}
+
+// Detecta tipo automaticamente
+function detectType(value) {
+  const v = String(value || '').trim();
+  const digits = onlyDigits(v);
+  if (/^\d{11}$/.test(digits)) return 'cpf';
+  if (/^\d{14}$/.test(digits)) return 'cnpj';
+  if (/^\d{8}$/.test(digits)) return 'cep';
+  if (/^\d{10,11}$/.test(digits)) return 'phone-br';
+  if (/@/.test(v)) return 'email';
+  if (/[A-Za-z]/.test(v) && /[0-9]/.test(v) && /[^A-Za-z0-9]/.test(v)) return 'password';
+  return null;
+}
+
+// Endpoints existentes
+app.get('/health', (req, res) => {
+  res.json({ status: 'ok', now: new Date().toISOString() });
 });
 
-// Busca por dia específico
-app.get('/api/datas', (req, res) => {
-  const { dia, date } = req.query;
-
-  let dd, mm;
-  if (date) {
-    const p = parseISODateParam(date);
-    if (!p) return res.status(400).json({ error: 'Parâmetro "date" inválido. Use YYYY-MM-DD.' });
-    ({ mm, dd } = p);
-  } else if (dia) {
-    const p = parseDiaParam(dia);
-    if (!p) return res.status(400).json({ error: 'Parâmetro "dia" inválido. Use DD-MM.' });
-    ({ mm, dd } = p);
-  } else {
-    return res.status(400).json({ error: 'Informe "dia=DD-MM" ou "date=YYYY-MM-DD".' });
-  }
-
-  const dateStr = `${pad2(mm)}-${pad2(dd)}`;
-  const observances = observancesForDay(dd, mm);
-
-  res.json({
-    date: dateStr,
-    itens: observances
-  });
+app.get('/validate/cpf', (req, res) => {
+  const { value } = req.query;
+  const result = validateCPF(value);
+  res.json({ type: 'cpf', input: String(value ?? ''), ...result });
 });
 
-// 404
-app.use((req, res) => {
-  res.status(404).json({ error: 'Rota não encontrada' });
+app.get('/validate/cnpj', (req, res) => {
+  const { value } = req.query;
+  const result = validateCNPJ(value);
+  res.json({ type: 'cnpj', input: String(value ?? ''), ...result });
 });
 
-app.listen(PORT, () => {
-  console.log(`API rodando em http://localhost:${PORT}`);
-
-});
+app.get('/validate/email', (req, res) => {
+ 
