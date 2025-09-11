@@ -1,36 +1,20 @@
 import express from 'express';
 import cors from 'cors';
-import helmet from 'helmet';
-import morgan from 'morgan';
+import { fileURLToPath } from 'url';
+import path from 'path';
+import carregarDatas from './src/loadDatasComemorativas.js';
 import rateLimit from 'express-rate-limit';
-import { createHash, randomBytes } from 'crypto';
+import helmet from 'helmet';
+import compression from 'compression';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
-
-// Configurações
 const PORT = process.env.PORT || 3000;
 const NODE_ENV = process.env.NODE_ENV || 'development';
 
-// Rate Limiting diferenciado por ambiente
-const generalLimiter = rateLimit({
-  windowMs: 60 * 1000,
-  max: NODE_ENV === 'production' ? 100 : 1000,
-  message: { error: 'Muitas requisições. Tente novamente em 1 minuto.' },
-  standardHeaders: true,
-  legacyHeaders: false,
-  keyGenerator: (req) => {
-    return req.ip + (req.headers['user-agent'] || '');
-  }
-});
-
-const strictLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 5,
-  message: { error: 'Muitas tentativas de validação. Tente novamente em 15 minutos.' },
-  skipSuccessfulRequests: true
-});
-
-// Middlewares
+// Middlewares de segurança e performance
 app.use(helmet({
   contentSecurityPolicy: {
     directives: {
@@ -40,494 +24,402 @@ app.use(helmet({
     }
   }
 }));
-
+app.use(compression());
 app.use(cors({
-  origin: process.env.ALLOWED_ORIGINS?.split(',') || ['http://localhost:3000'],
-  credentials: true
+  origin: process.env.CORS_ORIGIN || '*',
+  methods: ['GET', 'OPTIONS'],
+  allowedHeaders: ['Content-Type']
 }));
+app.use(express.json({ limit: '10kb' }));
 
-app.use(express.json({ limit: '200kb' }));
-app.use(express.urlencoded({ extended: true, limit: '200kb' }));
+// Rate limiting
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutos
+  max: NODE_ENV === 'production' ? 100 : 1000, // limites diferentes por ambiente
+  message: { error: 'Muitas requisições, tente novamente mais tarde.' },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+app.use(limiter);
 
-// Logging melhorado
-app.use(morgan(NODE_ENV === 'production' ? 'combined' : 'dev', {
-  skip: (req) => req.path === '/health'
-}));
+// Cache de dados em memória com atualização periódica
+let OBS = carregarDatas();
+const CACHE_TTL = 30 * 60 * 1000; // 30 minutos
 
-app.use(generalLimiter);
+// Atualizar cache periodicamente
+setInterval(() => {
+  console.log('Atualizando cache de datas comemorativas...');
+  OBS = carregarDatas();
+}, CACHE_TTL);
 
-// Cache de validações para evitar processamento repetido
-const validationCache = new Map();
-const CACHE_TTL = 5 * 60 * 1000; // 5 minutos
+/**
+ * Helpers de data melhorados
+ */
+class DateUtils {
+  static nowInTimeZone(timeZone = 'America/Sao_Paulo') {
+    try {
+      const now = new Date();
+      const formatter = new Intl.DateTimeFormat('en-CA', {
+        timeZone,
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+      });
+      
+      const parts = formatter.formatToParts(now);
+      const partsObj = Object.fromEntries(parts.map(p => [p.type, p.value]));
+      
+      return new Date(
+        `${partsObj.year}-${partsObj.month}-${partsObj.day}T${partsObj.hour}:${partsObj.minute}:${partsObj.second}`
+      );
+    } catch (error) {
+      throw new Error(`Fuso horário inválido: ${timeZone}`);
+    }
+  }
 
-function getCacheKey(type, value) {
-  return createHash('sha256').update(`${type}:${value}`).digest('hex');
+  static pad2(n) {
+    return String(n).padStart(2, '0');
+  }
+
+  static parseDiaParam(diaStr) {
+    const regex = /^(\d{2})-(\d{2})$/;
+    const match = diaStr.match(regex);
+    
+    if (!match) return null;
+    
+    const dd = parseInt(match[1], 10);
+    const mm = parseInt(match[2], 10);
+    
+    if (mm < 1 || mm > 12 || dd < 1 || dd > 31) return null;
+    
+    return { dd, mm };
+  }
+
+  static parseISODateParam(dateStr) {
+    const regex = /^(\d{4})-(\d{2})-(\d{2})$/;
+    const match = dateStr.match(regex);
+    
+    if (!match) return null;
+    
+    const yyyy = parseInt(match[1], 10);
+    const mm = parseInt(match[2], 10);
+    const dd = parseInt(match[3], 10);
+    
+    if (mm < 1 || mm > 12 || dd < 1 || dd > 31) return null;
+    
+    // Validação adicional de data
+    const date = new Date(yyyy, mm - 1, dd);
+    if (date.getMonth() + 1 !== mm || date.getDate() !== dd) {
+      return null;
+    }
+    
+    return { yyyy, mm, dd };
+  }
+
+  static isValidDate(year, month, day) {
+    const date = new Date(year, month - 1, day);
+    return date.getFullYear() === year && 
+           date.getMonth() + 1 === month && 
+           date.getDate() === day;
+  }
+}
+
+function normalizeItem(item) {
+  return {
+    date: item.date,
+    nome: item.nome || item.name || 'Nome não disponível',
+    tipo: item.tipo || 'comemoracao',
+    pais: item.pais || null,
+    estado: item.estado || null,
+    tags: Array.isArray(item.tags) ? item.tags : [],
+    fonte: item.fonte || item.note || 'Fonte não especificada',
+    descricao: item.descricao || null
+  };
+}
+
+function observancesForDay(dd, mm) {
+  return OBS.filter(o => {
+    const regex = /^--?(\d{2})-(\d{2})$/;
+    const match = o.date.match(regex);
+    
+    if (match) {
+      const month = parseInt(match[1], 10);
+      const day = parseInt(match[2], 10);
+      return day === dd && month === mm;
+    }
+    return false;
+  }).map(normalizeItem);
+}
+
+// Cache para respostas frequentes
+const responseCache = new Map();
+const CACHE_DURATION = 5 * 60 * 1000; // 5 minutos
+
+function getCacheKey(req) {
+  return `${req.path}?${new URLSearchParams(req.query).toString()}`;
 }
 
 function clearExpiredCache() {
   const now = Date.now();
-  for (const [key, { timestamp }] of validationCache.entries()) {
-    if (now - timestamp > CACHE_TTL) {
-      validationCache.delete(key);
+  for (const [key, value] of responseCache.entries()) {
+    if (now - value.timestamp > CACHE_DURATION) {
+      responseCache.delete(key);
     }
   }
 }
 
-setInterval(clearExpiredCache, 60 * 1000);
+setInterval(clearExpiredCache, 60 * 1000); // Limpar cache a cada minuto
 
-// Utils melhorados
-const onlyDigits = (s = '') => (s || '').toString().replace(/\D+/g, '');
-const isRepeated = (digits, minLength = 11) => {
-  return new RegExp(`^(\\d)\\1{${minLength - 1},}$`).test(digits);
-};
-
-// Validações melhoradas
-function validateCPF(raw) {
-  const cacheKey = getCacheKey('cpf', raw);
-  const cached = validationCache.get(cacheKey);
-  if (cached) return cached.result;
-
-  const errors = [];
-  const digits = onlyDigits(raw);
+/**
+ * Middlewares personalizados
+ */
+function cacheMiddleware(req, res, next) {
+  if (req.method !== 'GET') return next();
   
-  if (digits.length !== 11) {
-    errors.push('CPF deve ter exatamente 11 dígitos');
+  const cacheKey = getCacheKey(req);
+  const cached = responseCache.get(cacheKey);
+  
+  if (cached) {
+    res.setHeader('X-Cache', 'HIT');
+    return res.json(cached.data);
   }
   
-  if (isRepeated(digits)) {
-    errors.push('CPF inválido (sequência repetida)');
-  }
-
-  if (errors.length > 0) {
-    const result = { valid: false, errors };
-    validationCache.set(cacheKey, { result, timestamp: Date.now() });
-    return result;
-  }
-
-  // Cálculo dos dígitos verificadores
-  const calcCheckDigit = (base, factor) => {
-    let sum = 0;
-    for (let i = 0; i < base.length; i++) {
-      sum += parseInt(base[i]) * (factor - i);
-    }
-    const remainder = sum % 11;
-    return remainder < 2 ? 0 : 11 - remainder;
-  };
-
-  const base = digits.slice(0, 9);
-  const firstDigit = calcCheckDigit(base, 10);
-  const secondDigit = calcCheckDigit(base + firstDigit, 11);
-
-  const valid = firstDigit === parseInt(digits[9]) && secondDigit === parseInt(digits[10]);
-  
-  const result = valid
-    ? {
-        valid: true,
-        normalized: `${digits.slice(0, 3)}.${digits.slice(3, 6)}.${digits.slice(6, 9)}-${digits.slice(9)}`,
-        digits
-      }
-    : {
-        valid: false,
-        errors: ['Dígitos verificadores inválidos']
-      };
-
-  validationCache.set(cacheKey, { result, timestamp: Date.now() });
-  return result;
-}
-
-// CNPJ melhorado (similar ao CPF)
-function validateCNPJ(raw) {
-  const cacheKey = getCacheKey('cnpj', raw);
-  const cached = validationCache.get(cacheKey);
-  if (cached) return cached.result;
-
-  const errors = [];
-  const digits = onlyDigits(raw);
-  
-  if (digits.length !== 14) {
-    errors.push('CNPJ deve ter exatamente 14 dígitos');
-  }
-  
-  if (isRepeated(digits, 14)) {
-    errors.push('CNPJ inválido (sequência repetida)');
-  }
-
-  if (errors.length > 0) {
-    const result = { valid: false, errors };
-    validationCache.set(cacheKey, { result, timestamp: Date.now() });
-    return result;
-  }
-
-  const calcCheckDigit = (base, factors) => {
-    let sum = 0;
-    for (let i = 0; i < factors.length; i++) {
-      sum += parseInt(base[i]) * factors[i];
-    }
-    const remainder = sum % 11;
-    return remainder < 2 ? 0 : 11 - remainder;
-  };
-
-  const factors1 = [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
-  const factors2 = [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
-
-  const base = digits.slice(0, 12);
-  const firstDigit = calcCheckDigit(base, factors1);
-  const secondDigit = calcCheckDigit(base + firstDigit, factors2);
-
-  const valid = firstDigit === parseInt(digits[12]) && secondDigit === parseInt(digits[13]);
-  
-  const result = valid
-    ? {
-        valid: true,
-        normalized: `${digits.slice(0, 2)}.${digits.slice(2, 5)}.${digits.slice(5, 8)}/${digits.slice(8, 12)}-${digits.slice(12)}`,
-        digits
-      }
-    : {
-        valid: false,
-        errors: ['Dígitos verificadores inválidos']
-      };
-
-  validationCache.set(cacheKey, { result, timestamp: Date.now() });
-  return result;
-}
-
-// Email melhorado com validação de domínio
-async function validateEmail(raw) {
-  const cacheKey = getCacheKey('email', raw);
-  const cached = validationCache.get(cacheKey);
-  if (cached) return cached.result;
-
-  const errors = [];
-  const s = (raw || '').toString().trim().toLowerCase();
-  
-  if (!s) {
-    errors.push('E-mail não informado');
-  }
-  
-  if (s.length > 254) {
-    errors.push('E-mail muito longo');
-  }
-
-  const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
-  
-  if (!emailRegex.test(s)) {
-    errors.push('Formato de e-mail inválido');
-  }
-
-  const [localPart, domain] = s.split('@');
-  
-  if (localPart.length > 64) {
-    errors.push('Parte local do e-mail muito longa');
-  }
-
-  if (errors.length > 0) {
-    const result = { valid: false, errors };
-    validationCache.set(cacheKey, { result, timestamp: Date.now() });
-    return result;
-  }
-
-  const result = { valid: true, normalized: s };
-  validationCache.set(cacheKey, { result, timestamp: Date.now() });
-  return result;
-}
-
-// Password com mais opções e segurança
-function validatePassword(raw, policy = {}) {
-  const errors = [];
-  const s = (raw || '').toString();
-
-  const config = {
-    minLength: policy.minLength ?? 8,
-    maxLength: policy.maxLength ?? 128,
-    requireUpper: policy.upper ?? true,
-    requireLower: policy.lower ?? true,
-    requireNumber: policy.number ?? true,
-    requireSymbol: policy.symbol ?? true,
-    forbidCommon: policy.forbidCommon ?? true,
-    maxConsecutive: policy.maxConsecutive ?? 3
-  };
-
-  if (s.length < config.minLength) {
-    errors.push(`Senha deve ter no mínimo ${config.minLength} caracteres`);
-  }
-  
-  if (s.length > config.maxLength) {
-    errors.push(`Senha deve ter no máximo ${config.maxLength} caracteres`);
-  }
-
-  if (config.requireUpper && !/[A-Z]/.test(s)) {
-    errors.push('Deve conter pelo menos 1 letra maiúscula');
-  }
-
-  if (config.requireLower && !/[a-z]/.test(s)) {
-    errors.push('Deve conter pelo menos 1 letra minúscula');
-  }
-
-  if (config.requireNumber && !/\d/.test(s)) {
-    errors.push('Deve conter pelo menos 1 número');
-  }
-
-  if (config.requireSymbol && !/[!@#$%^&*(),.?":{}|<>_\-+=\[\]\\;/`'~]/.test(s)) {
-    errors.push('Deve conter pelo menos 1 símbolo');
-  }
-
-  // Verificar caracteres consecutivos
-  if (/(.)\1{2,}/.test(s)) {
-    errors.push(`Não pode ter mais de ${config.maxConsecutive} caracteres consecutivos iguais`);
-  }
-
-  if (config.forbidCommon) {
-    const commonPasswords = new Set([
-      '123456', 'password', '123456789', 'qwerty', 'abc123', 
-      '111111', '123123', 'senha', 'admin', 'iloveyou'
-    ]);
-    
-    if (commonPasswords.has(s.toLowerCase())) {
-      errors.push('Senha muito comum');
-    }
-  }
-
-  if (/^\s|\s$/.test(s)) {
-    errors.push('Não pode iniciar ou terminar com espaço');
-  }
-
-  // Calcular força da senha
-  let strength = 0;
-  if (s.length >= 12) strength += 2;
-  if (/[A-Z]/.test(s) && /[a-z]/.test(s)) strength += 1;
-  if (/\d/.test(s)) strength += 1;
-  if (/[^A-Za-z0-9]/.test(s)) strength += 2;
-
-  const result = errors.length === 0 
-    ? { valid: true, strength, length: s.length }
-    : { valid: false, errors, strength, length: s.length };
-
-  return result;
-}
-
-// Middleware de validação de entrada
-function validateInput(req, res, next) {
-  const { value } = req.query;
-  
-  if (value === undefined || value === null || value === '') {
-    return res.status(400).json({
-      error: 'Parâmetro "value" é obrigatório',
-      type: 'validation_error'
-    });
-  }
-
-  if (typeof value !== 'string') {
-    return res.status(400).json({
-      error: 'Parâmetro "value" deve ser uma string',
-      type: 'validation_error'
-    });
-  }
-
-  if (value.length > 1000) {
-    return res.status(400).json({
-      error: 'Valor muito longo (máximo 1000 caracteres)',
-      type: 'validation_error'
-    });
-  }
-
+  res.setHeader('X-Cache', 'MISS');
   next();
 }
 
-// Endpoints melhorados
-app.get('/health', (req, res) => {
-  res.json({
-    status: 'ok',
+function errorHandler(err, req, res, next) {
+  console.error('Erro:', err.message);
+  
+  if (err.message.includes('Fuso horário inválido')) {
+    return res.status(400).json({ 
+      error: 'Fuso horário inválido',
+      message: 'Verifique o parâmetro timeZone'
+    });
+  }
+  
+  res.status(500).json({ 
+    error: 'Erro interno do servidor',
+    ...(NODE_ENV === 'development' && { details: err.message })
+  });
+}
+
+/**
+ * Endpoints melhorados
+ */
+
+// Saúde com mais informações
+app.get('/api/health', (req, res) => {
+  res.json({ 
+    ok: true, 
+    service: 'api-datas-comemorativas', 
+    version: '2.1.0',
+    environment: NODE_ENV,
     timestamp: new Date().toISOString(),
     uptime: process.uptime(),
-    environment: NODE_ENV,
     memory: process.memoryUsage()
   });
 });
 
-app.get('/validate/cpf', validateInput, (req, res) => {
+// Hoje com timezone opcional
+app.get('/api/hoje', cacheMiddleware, (req, res) => {
   try {
-    const { value } = req.query;
-    const result = validateCPF(value);
-    res.json({
-      type: 'cpf',
-      input: value,
-      ...result,
-      timestamp: new Date().toISOString()
+    const { timeZone = 'America/Sao_Paulo' } = req.query;
+    const now = DateUtils.nowInTimeZone(timeZone);
+    const mm = now.getMonth() + 1;
+    const dd = now.getDate();
+    const yyyy = now.getFullYear();
+    const todayStr = `${DateUtils.pad2(mm)}-${DateUtils.pad2(dd)}`;
+
+    const observances = observancesForDay(dd, mm);
+
+    const response = {
+      date: `${yyyy}-${DateUtils.pad2(mm)}-${DateUtils.pad2(dd)}`,
+      formatted: todayStr,
+      timeZone,
+      itens: observances,
+      count: observances.length
+    };
+
+    // Cache da resposta
+    const cacheKey = getCacheKey(req);
+    responseCache.set(cacheKey, {
+      data: response,
+      timestamp: Date.now()
     });
+
+    res.json(response);
   } catch (error) {
-    res.status(500).json({
-      error: 'Erro interno ao validar CPF',
-      type: 'internal_error'
-    });
+    next(error);
   }
 });
 
-app.get('/validate/cnpj', validateInput, (req, res) => {
+// Busca por dia específico com mais opções
+app.get('/api/datas', cacheMiddleware, (req, res, next) => {
   try {
-    const { value } = req.query;
-    const result = validateCNPJ(value);
-    res.json({
-      type: 'cnpj',
-      input: value,
-      ...result,
-      timestamp: new Date().toISOString()
-    });
-  } catch (error) {
-    res.status(500).json({
-      error: 'Erro interno ao validar CNPJ',
-      type: 'internal_error'
-    });
-  }
-});
+    const { dia, date, mes, ano } = req.query;
+    let dd, mm, yyyy;
 
-app.get('/validate/email', validateInput, async (req, res) => {
-  try {
-    const { value } = req.query;
-    const result = await validateEmail(value);
-    res.json({
-      type: 'email',
-      input: value,
-      ...result,
-      timestamp: new Date().toISOString()
-    });
-  } catch (error) {
-    res.status(500).json({
-      error: 'Erro interno ao validar e-mail',
-      type: 'internal_error'
-    });
-  }
-});
+    if (date) {
+      const parsed = DateUtils.parseISODateParam(date);
+      if (!parsed) {
+        return res.status(400).json({ 
+          error: 'Parâmetro "date" inválido', 
+          message: 'Use o formato YYYY-MM-DD com uma data válida' 
+        });
+      }
+      ({ mm, dd, yyyy } = parsed);
+    } else if (dia) {
+      const parsed = DateUtils.parseDiaParam(dia);
+      if (!parsed) {
+        return res.status(400).json({ 
+          error: 'Parâmetro "dia" inválido', 
+          message: 'Use o formato DD-MM com valores válidos' 
+        });
+      }
+      ({ mm, dd } = parsed);
+      yyyy = new Date().getFullYear();
+    } else if (mes) {
+      const month = parseInt(mes, 10);
+      if (month < 1 || month > 12) {
+        return res.status(400).json({ 
+          error: 'Parâmetro "mes" inválido', 
+          message: 'Use um valor entre 1 e 12' 
+        });
+      }
+      mm = month;
+      yyyy = ano ? parseInt(ano, 10) : new Date().getFullYear();
+      
+      // Retornar todas as datas do mês
+      const monthObservances = OBS.filter(o => {
+        const match = o.date.match(/^--?(\d{2})-(\d{2})$/);
+        return match && parseInt(match[1], 10) === mm;
+      }).map(normalizeItem);
+      
+      const response = {
+        mes: mm,
+        ano: yyyy,
+        itens: monthObservances,
+        count: monthObservances.length
+      };
 
-app.post('/validate/password', (req, res) => {
-  try {
-    const { password, policy } = req.body;
-    
-    if (!password) {
-      return res.status(400).json({
-        error: 'Campo "password" é obrigatório',
-        type: 'validation_error'
+      const cacheKey = getCacheKey(req);
+      responseCache.set(cacheKey, {
+        data: response,
+        timestamp: Date.now()
+      });
+
+      return res.json(response);
+    } else {
+      return res.status(400).json({ 
+        error: 'Parâmetros insuficientes', 
+        message: 'Informe "dia=DD-MM", "date=YYYY-MM-DD" ou "mes=MM"' 
       });
     }
 
-    const result = validatePassword(password, policy);
-    res.json({
-      type: 'password',
-      input: password,
-      ...result,
-      timestamp: new Date().toISOString()
-    });
-  } catch (error) {
-    res.status(500).json({
-      error: 'Erro interno ao validar senha',
-      type: 'internal_error'
-    });
-  }
-});
-
-// Novo endpoint para validação em lote
-app.post('/validate/batch', strictLimiter, async (req, res) => {
-  try {
-    const { values } = req.body;
-    
-    if (!Array.isArray(values) || values.length > 20) {
-      return res.status(400).json({
-        error: 'Campo "values" deve ser um array com no máximo 20 itens',
-        type: 'validation_error'
+    if (!DateUtils.isValidDate(yyyy, mm, dd)) {
+      return res.status(400).json({ 
+        error: 'Data inválida', 
+        message: 'A data fornecida não existe no calendário' 
       });
     }
 
-    const results = await Promise.all(
-      values.map(async (item) => {
-        const type = detectType(item.value) || item.type;
-        
-        if (!type) {
-          return {
-            input: item.value,
-            type: 'unknown',
-            valid: false,
-            error: 'Tipo não identificado'
-          };
-        }
+    const dateStr = `${DateUtils.pad2(mm)}-${DateUtils.pad2(dd)}`;
+    const observances = observancesForDay(dd, mm);
 
-        try {
-          let result;
-          switch (type) {
-            case 'cpf':
-              result = validateCPF(item.value);
-              break;
-            case 'cnpj':
-              result = validateCNPJ(item.value);
-              break;
-            case 'email':
-              result = await validateEmail(item.value);
-              break;
-            case 'password':
-              result = validatePassword(item.value, item.policy);
-              break;
-            default:
-              result = { valid: false, error: 'Tipo não suportado' };
-          }
-          
-          return {
-            input: item.value,
-            type,
-            ...result
-          };
-        } catch (error) {
-          return {
-            input: item.value,
-            type,
-            valid: false,
-            error: 'Erro na validação'
-          };
-        }
-      })
-    );
+    const response = {
+      date: `${yyyy}-${DateUtils.pad2(mm)}-${DateUtils.pad2(dd)}`,
+      formatted: dateStr,
+      itens: observances,
+      count: observances.length
+    };
 
-    res.json({
-      results,
-      timestamp: new Date().toISOString(),
-      total: results.length,
-      valid: results.filter(r => r.valid).length
+    const cacheKey = getCacheKey(req);
+    responseCache.set(cacheKey, {
+      data: response,
+      timestamp: Date.now()
     });
+
+    res.json(response);
   } catch (error) {
-    res.status(500).json({
-      error: 'Erro interno ao processar validação em lote',
-      type: 'internal_error'
-    });
+    next(error);
   }
 });
 
-// Middleware de erro global
-app.use((error, req, res, next) => {
-  console.error('Erro não tratado:', error);
-  res.status(500).json({
-    error: 'Erro interno do servidor',
-    type: 'internal_error',
-    ...(NODE_ENV === 'development' && { stack: error.stack })
+// Novo endpoint para buscar por tags
+app.get('/api/tags', cacheMiddleware, (req, res, next) => {
+  try {
+    const { tag } = req.query;
+    
+    if (!tag) {
+      return res.status(400).json({ 
+        error: 'Tag não especificada', 
+        message: 'Use o parâmetro "tag" para buscar' 
+      });
+    }
+
+    const filtered = OBS.filter(item => 
+      item.tags && Array.isArray(item.tags) && 
+      item.tags.some(t => t.toLowerCase().includes(tag.toLowerCase()))
+    ).map(normalizeItem);
+
+    res.json({
+      tag,
+      itens: filtered,
+      count: filtered.length
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// Documentação da API
+app.get('/api/docs', (req, res) => {
+  res.json({
+    endpoints: {
+      '/api/health': 'Verificar status da API',
+      '/api/hoje': 'Datas comemorativas de hoje (parâmetro opcional: timeZone)',
+      '/api/datas': 'Buscar por data específica (dia=DD-MM ou date=YYYY-MM-DD ou mes=MM)',
+      '/api/tags': 'Buscar por tag específica (tag=nome_da_tag)'
+    },
+    examples: {
+      hoje: '/api/hoje?timeZone=America/Sao_Paulo',
+      dia: '/api/datas?dia=25-12',
+      data: '/api/datas?date=2024-12-25',
+      mes: '/api/datas?mes=12',
+      tag: '/api/tags?tag=natal'
+    }
   });
 });
 
-// Middleware para rotas não encontradas
+// 404 melhorado
 app.use('*', (req, res) => {
-  res.status(404).json({
-    error: 'Endpoint não encontrado',
-    type: 'not_found',
+  res.status(404).json({ 
+    error: 'Rota não encontrada',
+    message: 'Consulte /api/docs para ver os endpoints disponíveis',
     path: req.originalUrl
   });
 });
 
+// Middleware de erro
+app.use(errorHandler);
+
 // Graceful shutdown
 process.on('SIGTERM', () => {
-  console.log('Recebido SIGTERM. Encerrando servidor...');
+  console.log('Recebido SIGTERM, encerrando servidor...');
   server.close(() => {
-    console.log('Servidor encerrado.');
+    console.log('Servidor encerrado');
     process.exit(0);
   });
 });
 
 const server = app.listen(PORT, () => {
-  console.log(`Servidor rodando na porta ${PORT} (${NODE_ENV})`);
+  console.log(`API rodando em http://localhost:${PORT}`);
+  console.log(`Ambiente: ${NODE_ENV}`);
+  console.log(`Documentação disponível em http://localhost:${PORT}/api/docs`);
 });
 
 export default app;
