@@ -1,25 +1,13 @@
-{
-  "name": "api-datas-comemorativas",
-  "version": "1.0.0",
-  "description": "API simples para feriados e datas comemorativas (Brasil e globais).",
-  "main": "index.js",
-  "type": "module",
-  "scripts": {
-    "start": "node index.js",
-    "dev": "NODE_ENV=development node index.js"
+[
+  {
+    "date": "--01-01",
+    "nome": "Dia da Confraternização Universal",
+    "tipo": "feriado",
+    "pais": "BR"
   },
-  "keywords": [
-    "api",
-    "feriados",
-    "datas comemorativas",
-    "brasil",
-    "calendar",
-    "holidays"
-  ],
-  "author": "José",
-  "license": "MIT",
-  "dependencies": {
-    "cors": "^2.8.5",
-    "express": "^4.19.2"
+  {
+    "date": "--01-06",
+    "nome": "Dia de Reis",
+    "tipo": "comemoracao"
   }
-}
+]
