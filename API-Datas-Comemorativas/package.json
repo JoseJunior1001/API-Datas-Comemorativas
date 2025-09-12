@@ -1,13 +1,30 @@
-[
-  {
-    "date": "--01-01",
-    "nome": "Dia da Confraternização Universal",
-    "tipo": "feriado",
-    "pais": "BR"
+{
+  "name": "api-datas-comemorativas",
+  "version": "2.1.0",
+  "description": "API de datas comemorativas brasileiras",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "node --watch index.js",
+    "test": "node testarCarregamento.js"
   },
-  {
-    "date": "--01-06",
-    "nome": "Dia de Reis",
-    "tipo": "comemoracao"
+  "keywords": [
+    "api",
+    "datas-comemorativas",
+    "brasil",
+    "feriados"
+  ],
+  "author": "Seu Nome",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "express-rate-limit": "^7.1.5",
+    "helmet": "^7.1.0",
+    "compression": "^1.7.4"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   }
-]
+}
